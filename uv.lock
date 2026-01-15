@@ -306,7 +306,7 @@ wheels = [
 ]
 
 [[package]]
-name = "pointcloud-classification"
+name = "pointcloud-vision"
 version = "0.1.1"
 source = { virtual = "." }
 dependencies = [

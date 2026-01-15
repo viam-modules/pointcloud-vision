@@ -1,5 +1,5 @@
 [project]
-name = "pointcloud-classification"
+name = "pointcloud-vision"
 version = "0.1.1"
 description = "Add your description here"
 readme = "README.md"

@@ -14,3 +14,4 @@ uv venv
 
 uv sync --all-extras
 uv pip install pyinstaller
+uv pip install open3d

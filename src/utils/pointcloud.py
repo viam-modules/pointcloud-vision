@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 import numpy as np
+import open3d as o3d
 
 
 @dataclass
@@ -21,6 +22,38 @@ class PointCloud:
 
 
 def parse_pcd_bytes(data: bytes) -> PointCloud:
+    """
+    Alternative PCD parser using Open3D library.
+
+    Args:
+        data: Raw PCD file bytes
+
+    Returns:
+        PointCloud object with points, colors, and/or normals
+
+    Raises:
+        ValueError: If PCD format is invalid or unsupported
+    """
+    import io
+
+    tempfile = "/tmp/pcd_data.pcd"
+    with open(tempfile, "wb") as f:
+        f.write(data)
+    pcd = o3d.io.read_point_cloud(tempfile)
+
+    points = np.asarray(pcd.points, dtype=np.float32)
+
+    colors = (
+        np.asarray(pcd.colors, dtype=np.float32) if pcd.has_colors() else None
+    )
+    normals = (
+        np.asarray(pcd.normals, dtype=np.float32) if pcd.has_normals() else None
+    )
+
+    return PointCloud(points=points, colors=colors, normals=normals)
+
+
+def parse_pcd_bytes_manually(data: bytes) -> PointCloud:
     """
     Parse PCD format bytes into PointCloud object.
 
