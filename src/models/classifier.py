@@ -21,7 +21,7 @@ class Classifier(Vision, EasyResource):
     # To enable debug-level logging, either run viam-server with the --debug option,
     # or configure your resource/machine to display debug logs.
     MODEL: ClassVar[Model] = Model(
-        ModelFamily("viam-labs", "pointcloud-classification"), "classifier"
+        ModelFamily("viam", "vision"), "pointcloud-vision"
     )
 
     mlmodel: MLModel

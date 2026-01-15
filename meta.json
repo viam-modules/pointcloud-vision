@@ -1,8 +1,8 @@
 {
   "$schema": "https://dl.viam.dev/module.schema.json",
-  "module_id": "viam-labs:pointcloud-classification",
+  "module_id": "viam:pointcloud-vision",
   "visibility": "public",
-  "url": "https://github.com/viam-labs/pointcloud-classification",
+  "url": "https://github.com/viam-modules/pointcloud-vision",
   "description": "Computer vision service to create classifications from point cloud data",
   "applications": null,
   "markdown_link": "README.md",
@@ -11,8 +11,8 @@
   "models": [
     {
       "api": "rdk:service:vision",
-      "model": "viam-labs:pointcloud-classification:classifier",
-      "markdown_link": "viam-labs_pointcloud-classification_classifier.md",
+      "model": "viam:vision:pointcloud-vision",
+      "markdown_link": "viam_pointcloud-vision.md",
       "description": "Computer vision service to create classifications from point cloud data"
     }
   ],

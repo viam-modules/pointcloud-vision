@@ -1,4 +1,4 @@
-# Model viam-labs:pointcloud-classification:classifier
+# Model viam:vision:pointcloud-vision
 
 A Vision service that performs point cloud classification using machine learning models. This service captures point cloud data from a camera, preprocesses it (normalization, sampling), and runs inference through an ML model to classify the scene or object.
 
