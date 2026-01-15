@@ -3,7 +3,7 @@ from typing import ClassVar, List, Mapping, Optional, Sequence, Tuple, cast
 import numpy as np
 from typing_extensions import Self
 
-from utils.pointcloud import PointCloud, parse_pcd_bytes
+from src.utils.pointcloud import PointCloud, parse_pcd_bytes
 from viam.components.camera import Camera
 from viam.services.mlmodel import MLModel, Metadata
 from viam.media.video import ViamImage

@@ -12,5 +12,5 @@ fi
 
 uv venv
 
-uv sync
+uv sync --all-extras
 uv pip install pyinstaller
