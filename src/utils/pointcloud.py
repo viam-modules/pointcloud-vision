@@ -11,6 +11,7 @@ class PointCloud:
     points: np.ndarray  # (N, 3) XYZ coordinates
     colors: Optional[np.ndarray] = None  # (N, 3) RGB values in [0, 1]
     normals: Optional[np.ndarray] = None  # (N, 3) normal vectors
+    orig: o3d.geometry.PointCloud = None  # Original Open3D PointCloud
 
     def has_colors(self) -> bool:
         """Check if point cloud has color data"""
@@ -41,6 +42,17 @@ def parse_pcd_bytes(data: bytes) -> PointCloud:
         f.write(data)
     pcd = o3d.io.read_point_cloud(tempfile)
 
+    return new_from_original(pcd)
+
+
+def new_from_original(pcd: o3d.geometry.PointCloud) -> PointCloud:
+    """
+    Refill PointCloud data from original Open3D PointCloud.
+    Args:
+        pcd: Open3D PointCloud object
+    Returns:
+        PointCloud object with points, colors, and/or normals
+    """
     points = np.asarray(pcd.points, dtype=np.float32)
 
     colors = (
@@ -50,7 +62,48 @@ def parse_pcd_bytes(data: bytes) -> PointCloud:
         np.asarray(pcd.normals, dtype=np.float32) if pcd.has_normals() else None
     )
 
-    return PointCloud(points=points, colors=colors, normals=normals)
+    return PointCloud(points=points, colors=colors, normals=normals, orig=pcd)
+
+
+def new_from_array(input: np.ndarray) -> PointCloud:
+    """
+    Create PointCloud from points only.
+    
+    Args:
+        input: (N, 3) (N, 6) or (N, 9) array of XYZ coordinates
+    Returns
+        PointCloud object with points and orig only
+    """
+    orig = o3d.geometry.PointCloud()
+    if len(input.shape) != 2 or input.shape[1] not in [3, 6, 9]:
+        raise ValueError("Input array must be of shape (N, 3), (N, 6), or (N, 9)")
+        
+    points = input[:, 0:3].astype(np.float32)
+    orig.points = o3d.utility.Vector3dVector(points)
+
+    if input.shape[1] >= 6:
+        colors = input[:, 3:6].astype(np.float32)
+        orig.colors = o3d.utility.Vector3dVector(colors)
+
+    if input.shape[1] == 9:
+        normals = input[:, 6:9].astype(np.float32)
+        orig.normals = o3d.utility.Vector3dVector(normals)
+
+    return new_from_original(orig)
+
+
+def pcd_to_array(input: PointCloud) -> "np.ndarray":
+    points_np = np.asarray(input.points)
+    
+    if input.has_colors():
+        colors_np = np.asarray(input.colors)
+        if input.has_normals():
+            normals_np = np.asarray(input.normals)
+            return np.hstack((points_np, colors_np, normals_np))
+        else:
+            return np.hstack((points_np, colors_np))
+    else:
+        return points_np
 
 
 def parse_pcd_bytes_manually(data: bytes) -> PointCloud:

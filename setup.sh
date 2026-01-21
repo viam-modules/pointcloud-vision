@@ -10,8 +10,10 @@ if [ ! "$(command -v uv)" ]; then
   curl -LsSf https://astral.sh/uv/install.sh | sh
 fi
 
-uv venv
+uv venv --clear
 
 uv sync --all-extras
 uv pip install pyinstaller
 uv pip install open3d
+
+

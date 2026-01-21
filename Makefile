@@ -5,4 +5,4 @@ build:
 	./build.sh
 
 test:
-	pytest tests/
+	pytest -v tests/
