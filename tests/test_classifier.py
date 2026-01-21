@@ -28,13 +28,15 @@ def _create_pcd_bytes(points: np.ndarray, colors: np.ndarray = None) -> bytes:
         header_lines.append("TYPE F F F")
         header_lines.append("COUNT 1 1 1")
 
-    header_lines.extend([
-        f"WIDTH {num_points}",
-        "HEIGHT 1",
-        "VIEWPOINT 0 0 0 1 0 0 0",
-        f"POINTS {num_points}",
-        "DATA ascii",
-    ])
+    header_lines.extend(
+        [
+            f"WIDTH {num_points}",
+            "HEIGHT 1",
+            "VIEWPOINT 0 0 0 1 0 0 0",
+            f"POINTS {num_points}",
+            "DATA ascii",
+        ]
+    )
 
     # Create data lines
     data_lines = []
@@ -185,12 +187,14 @@ def test_logits_to_classifications_no_labels():
 def test_normalize_point_cloud():
     """Test point cloud normalization to unit sphere"""
     # Create test points: cube from -10 to 10
-    points = np.array([
-        [10.0, 10.0, 10.0],
-        [-10.0, -10.0, -10.0],
-        [5.0, 5.0, 5.0],
-        [0.0, 0.0, 0.0],
-    ])
+    points = np.array(
+        [
+            [10.0, 10.0, 10.0],
+            [-10.0, -10.0, -10.0],
+            [5.0, 5.0, 5.0],
+            [0.0, 0.0, 0.0],
+        ]
+    )
 
     classifier = MagicMock(spec=Classifier)
     result = Classifier._normalize_point_cloud(classifier, points)

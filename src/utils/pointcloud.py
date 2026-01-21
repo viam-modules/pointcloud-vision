@@ -55,12 +55,8 @@ def new_from_original(pcd: o3d.geometry.PointCloud) -> PointCloud:
     """
     points = np.asarray(pcd.points, dtype=np.float32)
 
-    colors = (
-        np.asarray(pcd.colors, dtype=np.float32) if pcd.has_colors() else None
-    )
-    normals = (
-        np.asarray(pcd.normals, dtype=np.float32) if pcd.has_normals() else None
-    )
+    colors = np.asarray(pcd.colors, dtype=np.float32) if pcd.has_colors() else None
+    normals = np.asarray(pcd.normals, dtype=np.float32) if pcd.has_normals() else None
 
     return PointCloud(points=points, colors=colors, normals=normals, orig=pcd)
 
@@ -68,7 +64,7 @@ def new_from_original(pcd: o3d.geometry.PointCloud) -> PointCloud:
 def new_from_array(input: np.ndarray) -> PointCloud:
     """
     Create PointCloud from points only.
-    
+
     Args:
         input: (N, 3) (N, 6) or (N, 9) array of XYZ coordinates
     Returns
@@ -77,7 +73,7 @@ def new_from_array(input: np.ndarray) -> PointCloud:
     orig = o3d.geometry.PointCloud()
     if len(input.shape) != 2 or input.shape[1] not in [3, 6, 9]:
         raise ValueError("Input array must be of shape (N, 3), (N, 6), or (N, 9)")
-        
+
     points = input[:, 0:3].astype(np.float32)
     orig.points = o3d.utility.Vector3dVector(points)
 
@@ -94,7 +90,7 @@ def new_from_array(input: np.ndarray) -> PointCloud:
 
 def pcd_to_array(input: PointCloud) -> "np.ndarray":
     points_np = np.asarray(input.points)
-    
+
     if input.has_colors():
         colors_np = np.asarray(input.colors)
         if input.has_normals():

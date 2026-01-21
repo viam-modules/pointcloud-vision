@@ -6,3 +6,6 @@ build:
 
 test:
 	pytest -v tests/
+
+lint:
+	black .

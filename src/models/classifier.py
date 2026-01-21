@@ -5,7 +5,12 @@ import numpy as np
 import open3d as o3d
 from typing_extensions import Self
 
-from src.utils.pointcloud import PointCloud, parse_pcd_bytes, new_from_array, pcd_to_array
+from src.utils.pointcloud import (
+    PointCloud,
+    parse_pcd_bytes,
+    new_from_array,
+    pcd_to_array,
+)
 from viam.components.camera import Camera
 from viam.services.mlmodel import MLModel, Metadata
 from viam.media.video import ViamImage
@@ -19,16 +24,11 @@ from viam.services.vision import Vision, CaptureAllResult
 from viam.utils import ValueTypes, struct_to_dict
 
 
-
-
 class Classifier(Vision, EasyResource):
     # To enable debug-level logging, either run viam-server with the --debug option,
     # or configure your resource/machine to display debug logs.
-    MODEL: ClassVar[Model] = Model(
-        ModelFamily("viam", "vision"), "pointcloud-vision"
-    )
+    MODEL: ClassVar[Model] = Model(ModelFamily("viam", "vision"), "pointcloud-vision")
 
-    
     DEFAULT_VOXEL_SIZE = 0.05  # Default voxel size for voxel downsampling (if chosen)
     mlmodel: MLModel
     default_camera: str
@@ -222,17 +222,16 @@ class Classifier(Vision, EasyResource):
             normalized = centered
 
         return normalized
-    
-    def _sample_point_cloud(
-            self, points: "np.ndarray", target_count: int, method: str
-        ) ->  "np.ndarray":
 
+    def _sample_point_cloud(
+        self, points: "np.ndarray", target_count: int, method: str
+    ) -> "np.ndarray":
         """
         Sample point cloud to target number of points.
         Args:
             points: Nx3 (or NxF) array of point features
             target_count: Desired number of points
-            method: Sampling method ("random", "voxel", or "fps")   
+            method: Sampling method ("random", "voxel", or "fps")
         Returns:
             Sampled points with shape [target_count, F]
         """
@@ -256,7 +255,7 @@ class Classifier(Vision, EasyResource):
                 indices = np.random.choice(current_count, target_count, replace=True)
                 sampled_points = points[indices]
                 return sampled_points
-            
+
             downsampled = cloud.orig.random_down_sample(ratio)
             if np.asarray(downsampled.points).shape[0] != target_count:
                 self.logger.warning(
@@ -269,8 +268,6 @@ class Classifier(Vision, EasyResource):
             downsampled = cloud.orig.farthest_point_down_sample(target_count)
 
         return pcd_to_array(downsampled)
-
-
 
     def _parse_point_cloud(self, pcd_bytes: bytes, mimetype: str) -> PointCloud:
         """
@@ -298,8 +295,8 @@ class Classifier(Vision, EasyResource):
         except Exception as e:
             raise RuntimeError(f"Failed to parse point cloud data: {e}")
 
-    
-    def _preprocess_point_cloud(self,
+    def _preprocess_point_cloud(
+        self,
         cloud: PointCloud,
         target_points: int,
         target_features: int,
@@ -320,7 +317,7 @@ class Classifier(Vision, EasyResource):
         Raises:
             ValueError: If required features are missing from cloud
         """
-        
+
         # Extract XYZ (always present)
         points = cloud.points
 
