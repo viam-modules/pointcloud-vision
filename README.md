@@ -4,7 +4,7 @@ A Viam module that implements a Vision service for point cloud classification us
 
 ## Overview
 
-The `viam-labs:pointcloud-classification:classifier` Vision service captures point cloud data from a camera, preprocesses it (normalization, sampling), and runs inference through an ML model to produce classification results with confidence scores.
+The `viam:vision:pointcloud-vision` Vision service captures point cloud data from a camera, preprocesses it (normalization, sampling), and runs inference through an ML model to produce classification results with confidence scores.
 
 ### Key Features
 
@@ -29,7 +29,7 @@ Add this module to your robot configuration through the Viam app:
 1. Navigate to your robot's config page
 2. Click the **Services** tab
 3. Click **Create service**
-4. Search for `viam-labs:pointcloud-classification:classifier`
+4. Search for `viam:vision:pointcloud-vision`
 5. Click **Add module**
 6. Configure the service attributes (see Configuration section)
 
@@ -57,7 +57,7 @@ Add the classifier as a Vision service in your robot configuration:
   "name": "my_classifier",
   "type": "vision",
   "namespace": "rdk",
-  "model": "viam-labs:pointcloud-classification:classifier",
+  "model": "viam:vision:pointcloud-vision",
   "attributes": {
     "mlmodel_name": "my_pointcloud_model",
     "camera_name": "my_depth_camera",
@@ -198,7 +198,7 @@ The module is structured as follows:
 
 This module provides the following Vision service:
 
-- [`viam-labs:pointcloud-classification:classifier`](viam-labs_pointcloud-classification_classifier.md) - Vision service for point cloud classification using ML models
+- [`viam:vision:pointcloud-vision`](viam_pointcloud-vision.md) - Vision service for point cloud classification using ML models
 
 ## License
 
