@@ -1,11 +1,12 @@
 [project]
-name = "pointcloud-classification"
+name = "pointcloud-vision"
 version = "0.1.1"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "numpy>=2.3.5",
+    "black>=26.1.0",
+    "numpy==1.26.4",
     "viam-sdk>=0.63.0",
 ]
 

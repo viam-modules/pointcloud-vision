@@ -1,9 +1,16 @@
+import sys
 from typing import ClassVar, List, Mapping, Optional, Sequence, Tuple, cast
 
 import numpy as np
+import open3d as o3d
 from typing_extensions import Self
 
-from utils.pointcloud import PointCloud, parse_pcd_bytes
+from src.utils.pointcloud import (
+    PointCloud,
+    parse_pcd_bytes,
+    new_from_array,
+    pcd_to_array,
+)
 from viam.components.camera import Camera
 from viam.services.mlmodel import MLModel, Metadata
 from viam.media.video import ViamImage
@@ -20,10 +27,9 @@ from viam.utils import ValueTypes, struct_to_dict
 class Classifier(Vision, EasyResource):
     # To enable debug-level logging, either run viam-server with the --debug option,
     # or configure your resource/machine to display debug logs.
-    MODEL: ClassVar[Model] = Model(
-        ModelFamily("viam-labs", "pointcloud-classification"), "classifier"
-    )
+    MODEL: ClassVar[Model] = Model(ModelFamily("viam", "vision"), "pointcloud-vision")
 
+    DEFAULT_VOXEL_SIZE = 0.05  # Default voxel size for voxel downsampling (if chosen)
     mlmodel: MLModel
     default_camera: str
     labels: Optional[List[str]]
@@ -222,32 +228,46 @@ class Classifier(Vision, EasyResource):
     ) -> "np.ndarray":
         """
         Sample point cloud to target number of points.
-
         Args:
             points: Nx3 (or NxF) array of point features
             target_count: Desired number of points
             method: Sampling method ("random", "voxel", or "fps")
-
         Returns:
             Sampled points with shape [target_count, F]
         """
+        # If we have the correct number of points, return as-is
         current_count = points.shape[0]
-
         if current_count == target_count:
             return points
 
-        # For now, only implement random sampling
-        # TODO: Add voxel and fps methods later
-        if method != "random":
+        # If they pick an invalid method, default to random
+        if method not in ["random", "voxel", "fps"]:
             self.logger.warning(
                 f"Sampling method '{method}' not yet implemented, using random"
             )
+            method = "random"
 
-        # Random sampling (works for both up and down sampling)
-        indices = np.random.choice(
-            current_count, target_count, replace=(current_count < target_count)
-        )
-        return points[indices]
+        cloud = new_from_array(points)
+        if method == "random":
+            ratio = target_count / current_count
+            if ratio > 1.0:
+                # Upsampling here.
+                indices = np.random.choice(current_count, target_count, replace=True)
+                sampled_points = points[indices]
+                return sampled_points
+
+            downsampled = cloud.orig.random_down_sample(ratio)
+            if np.asarray(downsampled.points).shape[0] != target_count:
+                self.logger.warning(
+                    f"Random sampling did not yield exact target count {target_count}, "
+                    f"got {np.asarray(downsampled.points).shape[0]}"
+                )
+        elif method == "voxel":
+            downsampled = cloud.orig.voxel_down_sample(self.DEFAULT_VOXEL_SIZE)
+        else:
+            downsampled = cloud.orig.farthest_point_down_sample(target_count)
+
+        return pcd_to_array(downsampled)
 
     def _parse_point_cloud(self, pcd_bytes: bytes, mimetype: str) -> PointCloud:
         """
@@ -297,6 +317,7 @@ class Classifier(Vision, EasyResource):
         Raises:
             ValueError: If required features are missing from cloud
         """
+
         # Extract XYZ (always present)
         points = cloud.points
 
