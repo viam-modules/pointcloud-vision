@@ -5,12 +5,21 @@ import numpy as np
 import open3d as o3d
 from typing_extensions import Self
 
-from src.utils.pointcloud import (
+try:
+    from utils.pointcloud import (
     PointCloud,
     parse_pcd_bytes,
     new_from_array,
     pcd_to_array,
 )
+except ModuleNotFoundError:
+    from src.utils.pointcloud import (
+        PointCloud,
+        parse_pcd_bytes,
+        new_from_array,
+        pcd_to_array,
+    )
+    
 from viam.components.camera import Camera
 from viam.services.mlmodel import MLModel, Metadata
 from viam.media.video import ViamImage
