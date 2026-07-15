@@ -2,14 +2,11 @@ import sys
 from typing import ClassVar, List, Mapping, Optional, Sequence, Tuple, cast
 
 import numpy as np
-import open3d as o3d
 from typing_extensions import Self
 
 from src.utils.pointcloud import (
     PointCloud,
     parse_pcd_bytes,
-    new_from_array,
-    pcd_to_array,
 )
 from viam.components.camera import Camera
 from viam.services.mlmodel import MLModel, Metadata
@@ -247,27 +244,32 @@ class Classifier(Vision, EasyResource):
             )
             method = "random"
 
-        cloud = new_from_array(points)
         if method == "random":
-            ratio = target_count / current_count
-            if ratio > 1.0:
-                # Upsampling here.
-                indices = np.random.choice(current_count, target_count, replace=True)
-                sampled_points = points[indices]
-                return sampled_points
-
-            downsampled = cloud.orig.random_down_sample(ratio)
-            if np.asarray(downsampled.points).shape[0] != target_count:
-                self.logger.warning(
-                    f"Random sampling did not yield exact target count {target_count}, "
-                    f"got {np.asarray(downsampled.points).shape[0]}"
-                )
+            indices = np.random.choice(current_count, target_count, replace=current_count < target_count)
+            return points[indices]
         elif method == "voxel":
-            downsampled = cloud.orig.voxel_down_sample(self.DEFAULT_VOXEL_SIZE)
+            xyz = points[:, :3]
+            voxel_size = self.DEFAULT_VOXEL_SIZE
+            voxel_indices = np.floor(xyz / voxel_size).astype(np.int32)
+            _, unique_idx = np.unique(voxel_indices, axis=0, return_index=True)
+            downsampled = points[unique_idx]
+            n_down = downsampled.shape[0]
+            if n_down >= target_count:
+                sel = np.random.choice(n_down, target_count, replace=False)
+                return downsampled[sel]
+            else:
+                pad = np.random.choice(n_down, target_count - n_down, replace=True)
+                return np.vstack([downsampled, downsampled[pad]])
         else:
-            downsampled = cloud.orig.farthest_point_down_sample(target_count)
-
-        return pcd_to_array(downsampled)
+            xyz = points[:, :3]
+            selected = [int(np.random.randint(0, current_count))]
+            distances = np.full(current_count, np.inf)
+            for _ in range(target_count - 1):
+                last = xyz[selected[-1]]
+                d = np.sum((xyz - last) ** 2, axis=1)
+                distances = np.minimum(distances, d)
+                selected.append(int(np.argmax(distances)))
+            return points[selected]
 
     def _parse_point_cloud(self, pcd_bytes: bytes, mimetype: str) -> PointCloud:
         """
