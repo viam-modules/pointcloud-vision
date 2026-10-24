@@ -54,6 +54,10 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
 
+      # open3d loads libEGL and libGL at import time.
+      - name: Install system libraries
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libegl1 libgl1
+
       # Deps and the dev extra from pyproject.toml, plus open3d, which setup.sh
       # installs separately.
       - name: Install dependencies
