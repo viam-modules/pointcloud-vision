@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional
+
 import numpy as np
 import open3d as o3d
 
@@ -35,7 +36,6 @@ def parse_pcd_bytes(data: bytes) -> PointCloud:
     Raises:
         ValueError: If PCD format is invalid or unsupported
     """
-    import io
 
     tempfile = "/tmp/pcd_data.pcd"
     with open(tempfile, "wb") as f:
