@@ -88,7 +88,7 @@ def test_parse_metadata_no_batch_dim():
     assert input_name == "points"
     assert target_points == 1024
     assert target_features == 3
-    assert has_batch_dim == False
+    assert has_batch_dim is False
     assert output_name == "logits"
     assert class_names is None
 
@@ -124,7 +124,7 @@ def test_parse_metadata_with_batch_dim():
     assert input_name == "input_points"
     assert target_points == 2048
     assert target_features == 6
-    assert has_batch_dim == True
+    assert has_batch_dim is True
     assert output_name == "output_logits"
 
 
