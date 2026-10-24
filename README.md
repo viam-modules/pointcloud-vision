@@ -82,17 +82,17 @@ Add the classifier as a Vision service in your robot configuration:
 from viam.robot.client import RobotClient
 from viam.services.vision import VisionClient
 
+
 async def classify_scene():
     # Connect to robot
-    robot = await RobotClient.at_address('<robot-address>')
+    robot = await RobotClient.at_address("<robot-address>")
 
     # Get the vision service
     classifier = VisionClient.from_robot(robot, "my_classifier")
 
     # Get classifications from camera
     classifications = await classifier.get_classifications_from_camera(
-        camera_name="my_depth_camera",
-        count=5
+        camera_name="my_depth_camera", count=5
     )
 
     # Print results
@@ -110,7 +110,7 @@ result = await classifier.capture_all_from_camera(
     camera_name="my_depth_camera",
     return_image=True,
     return_classifications=True,
-    extra={"count": 3}
+    extra={"count": 3},
 )
 
 if result.image:

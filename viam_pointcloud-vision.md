@@ -63,8 +63,7 @@ vision = VisionClient.from_robot(robot, "my_classifier")
 
 # Get top 5 classifications from a camera
 classifications = await vision.get_classifications_from_camera(
-    camera_name="my_camera",
-    count=5
+    camera_name="my_camera", count=5
 )
 
 for c in classifications:
@@ -80,7 +79,7 @@ result = await vision.capture_all_from_camera(
     camera_name="my_camera",
     return_image=True,
     return_classifications=True,
-    extra={"count": 3}
+    extra={"count": 3},
 )
 
 # Access image
