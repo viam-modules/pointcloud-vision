@@ -1,6 +1,7 @@
+from unittest.mock import AsyncMock, MagicMock
+
 import numpy as np
 import pytest
-from unittest.mock import AsyncMock, MagicMock
 
 from src.models.classifier import Classifier
 from src.utils.pointcloud import PointCloud
@@ -87,7 +88,7 @@ def test_parse_metadata_no_batch_dim():
     assert input_name == "points"
     assert target_points == 1024
     assert target_features == 3
-    assert has_batch_dim == False
+    assert has_batch_dim is False
     assert output_name == "logits"
     assert class_names is None
 
@@ -123,7 +124,7 @@ def test_parse_metadata_with_batch_dim():
     assert input_name == "input_points"
     assert target_points == 2048
     assert target_features == 6
-    assert has_batch_dim == True
+    assert has_batch_dim is True
     assert output_name == "output_logits"
 
 
@@ -367,8 +368,8 @@ async def test_get_classifications_from_camera_integration():
     mock_mlmodel.infer = AsyncMock(return_value={"logits": output_logits})
 
     # Create classifier instance
-    from viam.proto.app.robot import ComponentConfig
     from google.protobuf.struct_pb2 import Struct
+    from viam.proto.app.robot import ComponentConfig
 
     config = ComponentConfig()
     config.name = "test_classifier"
@@ -424,9 +425,9 @@ async def test_capture_all_from_camera_with_classifications():
     mock_mlmodel.metadata = AsyncMock(return_value=mock_metadata)
     mock_mlmodel.infer = AsyncMock(return_value={"logits": np.array([1, 2, 3, 4, 5])})
 
-    from viam.proto.app.robot import ComponentConfig
     from google.protobuf.struct_pb2 import Struct
     from viam.components.camera import Camera
+    from viam.proto.app.robot import ComponentConfig
     from viam.services.mlmodel import MLModel
 
     config = ComponentConfig()
@@ -456,8 +457,8 @@ async def test_capture_all_from_camera_with_classifications():
 @pytest.mark.asyncio
 async def test_get_classifications_raises_not_implemented():
     """Test get_classifications raises helpful error"""
-    from viam.proto.app.robot import ComponentConfig
     from google.protobuf.struct_pb2 import Struct
+    from viam.proto.app.robot import ComponentConfig
     from viam.services.mlmodel import MLModel
 
     config = ComponentConfig()
@@ -480,8 +481,8 @@ async def test_get_classifications_raises_not_implemented():
 
 def test_reconfigure_with_sampling_method():
     """Test that sampling_method is stored from config"""
-    from viam.proto.app.robot import ComponentConfig
     from google.protobuf.struct_pb2 import Struct
+    from viam.proto.app.robot import ComponentConfig
     from viam.services.mlmodel import MLModel
 
     config = ComponentConfig()
@@ -502,8 +503,8 @@ def test_reconfigure_with_sampling_method():
 
 def test_reconfigure_default_sampling_method():
     """Test default sampling_method is random"""
-    from viam.proto.app.robot import ComponentConfig
     from google.protobuf.struct_pb2 import Struct
+    from viam.proto.app.robot import ComponentConfig
     from viam.services.mlmodel import MLModel
 
     config = ComponentConfig()

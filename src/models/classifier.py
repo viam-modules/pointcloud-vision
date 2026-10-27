@@ -1,18 +1,8 @@
-import sys
 from typing import ClassVar, List, Mapping, Optional, Sequence, Tuple, cast
 
 import numpy as np
-import open3d as o3d
 from typing_extensions import Self
-
-from src.utils.pointcloud import (
-    PointCloud,
-    parse_pcd_bytes,
-    new_from_array,
-    pcd_to_array,
-)
 from viam.components.camera import Camera
-from viam.services.mlmodel import MLModel, Metadata
 from viam.media.video import ViamImage
 from viam.proto.app.robot import ComponentConfig
 from viam.proto.common import PointCloudObject, ResourceName
@@ -20,8 +10,16 @@ from viam.proto.service.vision import Classification, Detection
 from viam.resource.base import ResourceBase
 from viam.resource.easy_resource import EasyResource
 from viam.resource.types import Model, ModelFamily
-from viam.services.vision import Vision, CaptureAllResult
+from viam.services.mlmodel import Metadata, MLModel
+from viam.services.vision import CaptureAllResult, Vision
 from viam.utils import ValueTypes, struct_to_dict
+
+from src.utils.pointcloud import (
+    PointCloud,
+    new_from_array,
+    parse_pcd_bytes,
+    pcd_to_array,
+)
 
 
 class Classifier(Vision, EasyResource):
