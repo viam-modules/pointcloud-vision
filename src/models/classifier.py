@@ -6,7 +6,7 @@ from viam.components.camera import Camera
 from viam.media.video import ViamImage
 from viam.proto.app.robot import ComponentConfig
 from viam.proto.common import PointCloudObject, ResourceName
-from viam.proto.service.vision import Classification, Detection
+from viam.proto.service.vision import Classification, Detection, Detection3D
 from viam.resource.base import ResourceBase
 from viam.resource.easy_resource import EasyResource
 from viam.resource.types import Model, ModelFamily
@@ -418,6 +418,16 @@ class Classifier(Vision, EasyResource):
         timeout: Optional[float] = None,
     ) -> List[Detection]:
         self.logger.error("`get_detections` is not implemented")
+        raise NotImplementedError()
+
+    async def get_detections_3d(
+        self,
+        camera_name: str,
+        *,
+        extra: Optional[Mapping[str, ValueTypes]] = None,
+        timeout: Optional[float] = None,
+    ) -> List[Detection3D]:
+        self.logger.error("`get_detections_3d` is not implemented")
         raise NotImplementedError()
 
     async def get_classifications_from_camera(
